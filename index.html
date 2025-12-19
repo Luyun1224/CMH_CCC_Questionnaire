@@ -11,13 +11,16 @@
         :root {
             --brutal-black: #000000;
             --brutal-white: #ffffff;
-            --brutal-yellow: #ffff00;
+            --brutal-green: #61d384; /* 調整為更深且飽和的野獸派綠 */
             --shadow: 6px 6px 0px 0px #000000;
             --shadow-hover: 2px 2px 0px 0px #000000;
         }
 
         body {
-            background-color: var(--brutal-yellow);
+            background-color: var(--brutal-green);
+            /* 加入經典野獸派點狀矩陣花樣 */
+            background-image: radial-gradient(var(--brutal-black) 1px, transparent 1px);
+            background-size: 28px 28px;
             font-family: 'Noto Sans TC', sans-serif;
             color: var(--brutal-black);
             line-height: 1.4;
@@ -25,7 +28,7 @@
 
         .brutal-card {
             background: var(--brutal-white);
-            border: 4px solid var(--brutal-black);
+            border: 3px solid var(--brutal-black);
             box-shadow: var(--shadow);
             transition: all 0.2s ease;
         }
@@ -37,10 +40,7 @@
             outline: none;
             border-radius: 0;
             appearance: none;
-        }
-
-        .brutal-input:focus {
-            background-color: #f0f0f0;
+            width: 100%;
         }
 
         .brutal-btn {
@@ -60,7 +60,7 @@
 
         .brutal-btn.active {
             background: var(--brutal-black);
-            color: var(--brutal-yellow);
+            color: var(--brutal-green);
             transform: translate(4px, 4px);
             box-shadow: none;
         }
@@ -69,7 +69,7 @@
             background: var(--brutal-black);
             color: var(--brutal-white);
             display: inline-block;
-            padding: 4px 12px;
+            padding: 6px 16px;
             font-weight: 900;
             margin-bottom: 20px;
             transform: rotate(-1.5deg);
@@ -79,19 +79,20 @@
             display: inline-block;
             background: var(--brutal-black);
             color: var(--brutal-white);
-            padding: 0 12px;
+            padding: 2px 14px;
             transform: skewX(-10deg) rotate(-1deg);
             margin: 0 4px;
         }
 
         input[type="radio"] {
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             border: 3px solid var(--brutal-black);
             appearance: none;
             cursor: pointer;
             position: relative;
             background: white;
+            flex-shrink: 0;
         }
 
         input[type="radio"]:checked {
@@ -100,17 +101,17 @@
 
         input[type="radio"]:checked::after {
             content: '✓';
-            color: var(--brutal-yellow);
+            color: var(--brutal-green);
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             font-weight: bold;
-            font-size: 14px;
+            font-size: 16px;
         }
 
         .likert-row:nth-child(even) {
-            background: #f9fafb;
+            background: #eefdf4;
         }
 
         .heavy-border {
@@ -120,10 +121,10 @@
         .badge-2025 {
             position: absolute;
             top: -15px;
-            right: -15px;
+            right: 15px;
             background: var(--brutal-black);
-            color: var(--brutal-yellow);
-            padding: 5px 15px;
+            color: var(--brutal-green);
+            padding: 6px 18px;
             font-weight: 900;
             transform: rotate(5deg);
             border: 3px solid var(--brutal-white);
@@ -136,9 +137,9 @@
         }
 
         .header-row {
-            background-color: #f3f4f6;
+            background-color: #d1d5db;
             border-bottom: 2px solid #000000;
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             font-weight: 900;
         }
 
@@ -151,15 +152,16 @@
             font-weight: 900;
             text-align: center;
             position: sticky;
-            top: 20px;
-            z-index: 50;
+            top: 10px;
+            z-index: 100;
         }
 
-        #validation-notice { background: #ff0000; color: #ffffff; }
-        #loading-notice { background: #ffffff; color: #000000; }
+        #validation-notice { background: #ff4d4d; color: #ffffff; }
+        #loading-notice { background: #ffffff; color: #000000; border-color: #22c55e; }
 
         .invalid-highlight {
-            border: 4px solid #ff0000 !important;
+            border: 5px solid #ff0000 !important;
+            background-color: #fff5f5 !important;
             animation: shake 0.5s;
         }
 
@@ -168,35 +170,40 @@
             25% { transform: translateX(-5px); }
             75% { transform: translateX(5px); }
         }
+
+        @media (max-width: 768px) {
+            .badge-2025 { right: 5px; top: -10px; }
+        }
     </style>
 </head>
-<body class="py-12 px-4">
+<body class="py-6 md:py-12 px-3 md:px-6">
 
     <div class="max-w-4xl mx-auto">
-        <header class="heavy-border bg-white p-8 mb-12 shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] relative">
-            <div class="badge-2025 text-xl">2025 SURVEY</div>
-            <h1 class="text-xl md:text-3xl lg:text-4xl font-[900] mb-4 tracking-tighter italic text-center md:text-left">
-                奇美醫院 <span class="tilted-box">臨床技能中心</span> 滿意度調查
+        <header class="heavy-border bg-white p-6 md:p-10 mb-8 md:mb-12 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] relative">
+            <div class="badge-2025 text-lg md:text-xl">2025 SURVEY</div>
+            <h1 class="text-2xl md:text-4xl lg:text-5xl font-[900] mb-5 tracking-tighter italic leading-tight">
+                奇美醫院 <br class="md:hidden"> <span class="tilted-box">臨床技能中心</span> 滿意度調查
             </h1>
-            <p class="text-lg font-bold border-t-4 border-black pt-4 uppercase tracking-widest text-center md:text-left">
-                CHIMEI MEDICAL CENTER // CLINICAL COMPETENCY CENTER
+            <p class="text-sm md:text-lg font-bold border-t-4 border-black pt-4 uppercase tracking-widest leading-snug">
+                CHIMEI MEDICAL CENTER // <span class="text-green-600">CLINICAL COMPETENCY CENTER</span>
             </p>
         </header>
 
         <div id="validation-notice">
-            <div class="text-2xl mb-2 underline decoration-4 underline-offset-4">❗ 發現漏填項目 ❗</div>
-            <p>已為您自動跳轉至第一個漏填的項目，請補齊後再試。</p>
+            <div class="text-xl md:text-2xl mb-2 underline decoration-4 underline-offset-4">❗ 發現漏填項目 ❗</div>
+            <p>已自動跳轉，請補齊標示紅框的題目。</p>
         </div>
 
         <div id="loading-notice">
-            <div class="text-2xl mb-2">⏳ 資料傳輸中...</div>
-            <p>請稍候，正在將您的意見存檔至雲端試算表。</p>
+            <div class="text-xl md:text-2xl mb-2 animate-bounce">⏳ 資料同步中...</div>
+            <p>請稍候，正在為您儲存寶貴建議至雲端系統。</p>
         </div>
 
-        <form id="cscSurvey" class="space-y-12" novalidate>
-            <section class="brutal-card p-8" id="section-01">
-                <span class="section-title text-xl">01 IDENTIFICATION // 基本資料</span>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+        <form id="cscSurvey" class="space-y-8 md:space-y-12" novalidate>
+            <!-- 01 基本資料 -->
+            <section class="brutal-card p-5 md:p-8" id="section-01">
+                <span class="section-title text-lg md:text-xl">01 IDENTIFICATION // 基本資料</span>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mt-4">
                     <div class="flex flex-col">
                         <label class="font-black mb-2 uppercase tracking-widest">職別</label>
                         <select name="job_role" id="job_role" required class="brutal-input bg-white" onchange="toggleOtherRole()">
@@ -222,7 +229,7 @@
                             <option value="other">其他</option>
                         </select>
                         <div id="other-role-container" class="hidden mt-4">
-                            <input type="text" name="other_job_role" id="other_job_role" placeholder="請輸入具體職別..." class="brutal-input w-full bg-yellow-50">
+                            <input type="text" name="other_job_role" id="other_job_role" placeholder="請輸入具體職別..." class="brutal-input bg-green-50">
                         </div>
                     </div>
                     <div class="flex flex-col">
@@ -263,101 +270,131 @@
                 </div>
             </section>
 
-            <section id="satisfaction-section" class="brutal-card p-8">
-                <span class="section-title text-xl">02 SATISFACTION // 核心維度評分</span>
-                <p class="text-sm font-bold mb-6 italic">(5: 極滿意 / 1: 極不滿意)</p>
+            <!-- 02 滿意度評分區塊 -->
+            <section id="satisfaction-section" class="brutal-card p-5 md:p-8">
+                <span class="section-title text-lg md:text-xl">02 SATISFACTION // 核心維度評分</span>
+                <p class="text-xs font-bold mb-6 italic">( 5: 極滿意 / 1: 極不滿意 / N/A: 未接觸 )</p>
+
                 <div class="space-y-12">
+                    <!-- A. 環境設施 -->
                     <div class="sat-group">
-                        <h3 class="font-black text-lg bg-black text-white inline-block px-2 mb-4">A. 環境設施</h3>
-                        <div class="border-4 border-black">
-                            <div class="grid grid-cols-12 gap-2 p-3 header-row text-center">
-                                <div class="col-span-12 md:col-span-7 text-left">評估項目</div>
-                                <div class="col-span-12 md:col-span-5 flex justify-around"><span>1</span><span>2</span><span>3</span><span>4</span><span class="text-blue-600">5</span><span>N/A</span></div>
+                        <h3 class="font-black text-md md:text-lg bg-black text-white inline-block px-2 mb-4">A. 環境設施</h3>
+                        <div class="border-2 md:border-4 border-black">
+                            <div class="hidden md:grid grid-cols-12 gap-2 p-3 header-row text-center">
+                                <div class="col-span-7 text-left">評估項目</div>
+                                <div class="col-span-5 flex justify-around"><span>1</span><span>2</span><span>3</span><span>4</span><span class="text-green-700">5</span><span>N/A</span></div>
                             </div>
                             <div class="likert-rows">
-                                <div class="grid grid-cols-12 gap-2 p-3 items-center likert-row">
-                                    <div class="col-span-12 md:col-span-7 font-bold">1. 模擬診間的環境擬真程度與專業氛圍。</div>
-                                    <div class="col-span-12 md:col-span-5 flex justify-around"><input type="radio" name="env_1" value="1" required><input type="radio" name="env_1" value="2"><input type="radio" name="env_1" value="3"><input type="radio" name="env_1" value="4"><input type="radio" name="env_1" value="5"><input type="radio" name="env_1" value="NA"></div>
+                                <div class="flex flex-col md:grid md:grid-cols-12 gap-2 p-4 items-center likert-row border-b md:border-b-0 border-black/10">
+                                    <div class="md:col-span-7 font-bold text-sm md:text-base">1. 模擬診間的環境擬真程度與專業氛圍。</div>
+                                    <div class="md:col-span-5 flex justify-around w-full mt-2 md:mt-0">
+                                        <input type="radio" name="env_1" value="1" required><input type="radio" name="env_1" value="2"><input type="radio" name="env_1" value="3"><input type="radio" name="env_1" value="4"><input type="radio" name="env_1" value="5"><input type="radio" name="env_1" value="NA">
+                                    </div>
                                 </div>
-                                <div class="grid grid-cols-12 gap-2 p-3 items-center likert-row">
-                                    <div class="col-span-12 md:col-span-7 font-bold">2. 教室空間分配及動線規劃是否能滿足團隊演練需求。</div>
-                                    <div class="col-span-12 md:col-span-5 flex justify-around"><input type="radio" name="env_2" value="1" required><input type="radio" name="env_2" value="2"><input type="radio" name="env_2" value="3"><input type="radio" name="env_2" value="4"><input type="radio" name="env_2" value="5"><input type="radio" name="env_2" value="NA"></div>
+                                <div class="flex flex-col md:grid md:grid-cols-12 gap-2 p-4 items-center likert-row border-b md:border-b-0 border-black/10">
+                                    <div class="md:col-span-7 font-bold text-sm md:text-base">2. 教室空間分配及動線規劃是否能滿足團隊演練需求。</div>
+                                    <div class="md:col-span-5 flex justify-around w-full mt-2 md:mt-0">
+                                        <input type="radio" name="env_2" value="1" required><input type="radio" name="env_2" value="2"><input type="radio" name="env_2" value="3"><input type="radio" name="env_2" value="4"><input type="radio" name="env_2" value="5"><input type="radio" name="env_2" value="NA">
+                                    </div>
                                 </div>
-                                <div class="grid grid-cols-12 gap-2 p-3 items-center likert-row">
-                                    <div class="col-span-12 md:col-span-7 font-bold">3. 中心內部的空調舒適度、照明亮度及學習靜謐程度。</div>
-                                    <div class="col-span-12 md:col-span-5 flex justify-around"><input type="radio" name="env_3" value="1" required><input type="radio" name="env_3" value="2"><input type="radio" name="env_3" value="3"><input type="radio" name="env_3" value="4"><input type="radio" name="env_3" value="5"><input type="radio" name="env_3" value="NA"></div>
+                                <div class="flex flex-col md:grid md:grid-cols-12 gap-2 p-4 items-center likert-row">
+                                    <div class="md:col-span-7 font-bold text-sm md:text-base">3. 中心內部的空調舒適度、照明亮度及學習靜謐程度。</div>
+                                    <div class="md:col-span-5 flex justify-around w-full mt-2 md:mt-0">
+                                        <input type="radio" name="env_3" value="1" required><input type="radio" name="env_3" value="2"><input type="radio" name="env_3" value="3"><input type="radio" name="env_3" value="4"><input type="radio" name="env_3" value="5"><input type="radio" name="env_3" value="NA">
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- B. 設備器材 -->
                     <div class="sat-group">
-                        <h3 class="font-black text-lg bg-black text-white inline-block px-2 mb-4">B. 設備器材</h3>
-                        <div class="border-4 border-black">
-                            <div class="grid grid-cols-12 gap-2 p-3 header-row text-center">
-                                <div class="col-span-12 md:col-span-7 text-left">評估項目</div>
-                                <div class="col-span-12 md:col-span-5 flex justify-around"><span>1</span><span>2</span><span>3</span><span>4</span><span class="text-blue-600">5</span><span>N/A</span></div>
+                        <h3 class="font-black text-md md:text-lg bg-black text-white inline-block px-2 mb-4">B. 設備器材</h3>
+                        <div class="border-2 md:border-4 border-black">
+                            <div class="hidden md:grid grid-cols-12 gap-2 p-3 header-row text-center">
+                                <div class="col-span-7 text-left">評估項目</div>
+                                <div class="col-span-5 flex justify-around"><span>1</span><span>2</span><span>3</span><span>4</span><span class="text-green-700">5</span><span>N/A</span></div>
                             </div>
                             <div class="likert-rows">
-                                <div class="grid grid-cols-12 gap-2 p-3 items-center likert-row">
-                                    <div class="col-span-12 md:col-span-7 font-bold">1. 模擬人及各類教具之精細度、功能性與科技先進程度。</div>
-                                    <div class="col-span-12 md:col-span-5 flex justify-around"><input type="radio" name="eq_1" value="1" required><input type="radio" name="eq_1" value="2"><input type="radio" name="eq_1" value="3"><input type="radio" name="eq_1" value="4"><input type="radio" name="eq_1" value="5"><input type="radio" name="eq_1" value="NA"></div>
+                                <div class="flex flex-col md:grid md:grid-cols-12 gap-2 p-4 items-center likert-row border-b md:border-b-0 border-black/10">
+                                    <div class="md:col-span-7 font-bold text-sm md:text-base">1. 模擬人及各類教具之精細度、功能性與科技先進程度。</div>
+                                    <div class="md:col-span-5 flex justify-around w-full mt-2 md:mt-0">
+                                        <input type="radio" name="eq_1" value="1" required><input type="radio" name="eq_1" value="2"><input type="radio" name="eq_1" value="3"><input type="radio" name="eq_1" value="4"><input type="radio" name="eq_1" value="5"><input type="radio" name="eq_1" value="NA">
+                                    </div>
                                 </div>
-                                <div class="grid grid-cols-12 gap-2 p-3 items-center likert-row">
-                                    <div class="col-span-12 md:col-span-7 font-bold">2. 各項設備器械的妥善率以及故障維修處理的時效性。</div>
-                                    <div class="col-span-12 md:col-span-5 flex justify-around"><input type="radio" name="eq_2" value="1" required><input type="radio" name="eq_2" value="2"><input type="radio" name="eq_2" value="3"><input type="radio" name="eq_2" value="4"><input type="radio" name="eq_2" value="5"><input type="radio" name="eq_2" value="NA"></div>
+                                <div class="flex flex-col md:grid md:grid-cols-12 gap-2 p-4 items-center likert-row border-b md:border-b-0 border-black/10">
+                                    <div class="md:col-span-7 font-bold text-sm md:text-base">2. 各項設備器械的妥善率以及故障維修處理的時效性。</div>
+                                    <div class="md:col-span-5 flex justify-around w-full mt-2 md:mt-0">
+                                        <input type="radio" name="eq_2" value="1" required><input type="radio" name="eq_2" value="2"><input type="radio" name="eq_2" value="3"><input type="radio" name="eq_2" value="4"><input type="radio" name="eq_2" value="5"><input type="radio" name="eq_2" value="NA">
+                                    </div>
                                 </div>
-                                <div class="grid grid-cols-12 gap-2 p-3 items-center likert-row">
-                                    <div class="col-span-12 md:col-span-7 font-bold">3. 練習用器械與臨床實際器械之規格、手感的一致程度。</div>
-                                    <div class="col-span-12 md:col-span-5 flex justify-around"><input type="radio" name="eq_3" value="1" required><input type="radio" name="eq_3" value="2"><input type="radio" name="eq_3" value="3"><input type="radio" name="eq_3" value="4"><input type="radio" name="eq_3" value="5"><input type="radio" name="eq_3" value="NA"></div>
+                                <div class="flex flex-col md:grid md:grid-cols-12 gap-2 p-4 items-center likert-row">
+                                    <div class="md:col-span-7 font-bold text-sm md:text-base">3. 練習用器械與臨床實際器械之規格、手感的一致程度。</div>
+                                    <div class="md:col-span-5 flex justify-around w-full mt-2 md:mt-0">
+                                        <input type="radio" name="eq_3" value="1" required><input type="radio" name="eq_3" value="2"><input type="radio" name="eq_3" value="3"><input type="radio" name="eq_3" value="4"><input type="radio" name="eq_3" value="5"><input type="radio" name="eq_3" value="NA">
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- C. 行政服務 -->
                     <div class="sat-group">
-                        <h3 class="font-black text-lg bg-black text-white inline-block px-2 mb-4">C. 行政服務</h3>
-                        <div class="border-4 border-black">
-                            <div class="grid grid-cols-12 gap-2 p-3 header-row text-center">
-                                <div class="col-span-12 md:col-span-7 text-left">評估項目</div>
-                                <div class="col-span-12 md:col-span-5 flex justify-around"><span>1</span><span>2</span><span>3</span><span>4</span><span class="text-blue-600">5</span><span>N/A</span></div>
+                        <h3 class="font-black text-md md:text-lg bg-black text-white inline-block px-2 mb-4">C. 行政服務</h3>
+                        <div class="border-2 md:border-4 border-black">
+                            <div class="hidden md:grid grid-cols-12 gap-2 p-3 header-row text-center">
+                                <div class="col-span-7 text-left">評估項目</div>
+                                <div class="col-span-5 flex justify-around"><span>1</span><span>2</span><span>3</span><span>4</span><span class="text-green-700">5</span><span>N/A</span></div>
                             </div>
                             <div class="likert-rows">
-                                <div class="grid grid-cols-12 gap-2 p-3 items-center likert-row">
-                                    <div class="col-span-12 md:col-span-7 font-bold">1. 預約系統操作直覺且流程簡便。</div>
-                                    <div class="col-span-12 md:col-span-5 flex justify-around"><input type="radio" name="ad_1" value="1" required><input type="radio" name="ad_1" value="2"><input type="radio" name="ad_1" value="3"><input type="radio" name="ad_1" value="4"><input type="radio" name="ad_1" value="5"><input type="radio" name="ad_1" value="NA"></div>
+                                <div class="flex flex-col md:grid md:grid-cols-12 gap-2 p-4 items-center likert-row border-b md:border-b-0 border-black/10">
+                                    <div class="md:col-span-7 font-bold text-sm md:text-base">1. 預約系統操作直覺且流程簡便。</div>
+                                    <div class="md:col-span-5 flex justify-around w-full mt-2 md:mt-0">
+                                        <input type="radio" name="ad_1" value="1" required><input type="radio" name="ad_1" value="2"><input type="radio" name="ad_1" value="3"><input type="radio" name="ad_1" value="4"><input type="radio" name="ad_1" value="5"><input type="radio" name="ad_1" value="NA">
+                                    </div>
                                 </div>
-                                <div class="grid grid-cols-12 gap-2 p-3 items-center likert-row">
-                                    <div class="col-span-12 md:col-span-7 font-bold">2. 中心人員服務態度友善且專業。</div>
-                                    <div class="col-span-12 md:col-span-5 flex justify-around"><input type="radio" name="ad_2" value="1" required><input type="radio" name="ad_2" value="2"><input type="radio" name="ad_2" value="3"><input type="radio" name="ad_2" value="4"><input type="radio" name="ad_2" value="5"><input type="radio" name="ad_2" value="NA"></div>
+                                <div class="flex flex-col md:grid md:grid-cols-12 gap-2 p-4 items-center likert-row border-b md:border-b-0 border-black/10">
+                                    <div class="md:col-span-7 font-bold text-sm md:text-base">2. 中心人員服務態度友善且專業。</div>
+                                    <div class="md:col-span-5 flex justify-around w-full mt-2 md:mt-0">
+                                        <input type="radio" name="ad_2" value="1" required><input type="radio" name="ad_2" value="2"><input type="radio" name="ad_2" value="3"><input type="radio" name="ad_2" value="4"><input type="radio" name="ad_2" value="5"><input type="radio" name="ad_2" value="NA">
+                                    </div>
                                 </div>
-                                <div class="grid grid-cols-12 gap-2 p-3 items-center likert-row">
-                                    <div class="col-span-12 md:col-span-7 font-bold">3. 工作人員提供技術支援之效率。</div>
-                                    <div class="col-span-12 md:col-span-5 flex justify-around"><input type="radio" name="ad_3" value="1" required><input type="radio" name="ad_3" value="2"><input type="radio" name="ad_3" value="3"><input type="radio" name="ad_3" value="4"><input type="radio" name="ad_3" value="5"><input type="radio" name="ad_3" value="NA"></div>
+                                <div class="flex flex-col md:grid md:grid-cols-12 gap-2 p-4 items-center likert-row">
+                                    <div class="md:col-span-7 font-bold text-sm md:text-base">3. 工作人員提供技術支援之效率。</div>
+                                    <div class="md:col-span-5 flex justify-around w-full mt-2 md:mt-0">
+                                        <input type="radio" name="ad_3" value="1" required><input type="radio" name="ad_3" value="2"><input type="radio" name="ad_3" value="3"><input type="radio" name="ad_3" value="4"><input type="radio" name="ad_3" value="5"><input type="radio" name="ad_3" value="NA">
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- D. 學習效益 -->
                     <div class="sat-group">
-                        <h3 class="font-black text-lg bg-black text-white inline-block px-2 mb-4">D. 學習效益</h3>
-                        <div class="border-4 border-black">
-                            <div class="grid grid-cols-12 gap-2 p-3 header-row text-center">
-                                <div class="col-span-12 md:col-span-7 text-left">評估項目</div>
-                                <div class="col-span-12 md:col-span-5 flex justify-around"><span>1</span><span>2</span><span>3</span><span>4</span><span class="text-blue-600">5</span><span>N/A</span></div>
+                        <h3 class="font-black text-md md:text-lg bg-black text-white inline-block px-2 mb-4">D. 學習效益</h3>
+                        <div class="border-2 md:border-4 border-black">
+                            <div class="hidden md:grid grid-cols-12 gap-2 p-3 header-row text-center">
+                                <div class="col-span-7 text-left">評估項目</div>
+                                <div class="col-span-5 flex justify-around"><span>1</span><span>2</span><span>3</span><span>4</span><span class="text-green-700">5</span><span>N/A</span></div>
                             </div>
                             <div class="likert-rows">
-                                <div class="grid grid-cols-12 gap-2 p-3 items-center likert-row">
-                                    <div class="col-span-12 md:col-span-7 font-bold italic">1. 在中心練習有助於提升臨床操作信心。</div>
-                                    <div class="col-span-12 md:col-span-5 flex justify-around"><input type="radio" name="le_1" value="1" required><input type="radio" name="le_1" value="2"><input type="radio" name="le_1" value="3"><input type="radio" name="le_1" value="4"><input type="radio" name="le_1" value="5"><input type="radio" name="le_1" value="NA"></div>
+                                <div class="flex flex-col md:grid md:grid-cols-12 gap-2 p-4 items-center likert-row border-b md:border-b-0 border-black/10">
+                                    <div class="md:col-span-7 font-bold italic text-sm md:text-base">1. 在中心練習有助於提升臨床操作信心。</div>
+                                    <div class="md:col-span-5 flex justify-around w-full mt-2 md:mt-0">
+                                        <input type="radio" name="le_1" value="1" required><input type="radio" name="le_1" value="2"><input type="radio" name="le_1" value="3"><input type="radio" name="le_1" value="4"><input type="radio" name="le_1" value="5"><input type="radio" name="le_1" value="NA">
+                                    </div>
                                 </div>
-                                <div class="grid grid-cols-12 gap-2 p-3 items-center likert-row">
-                                    <div class="col-span-12 md:col-span-7 font-bold italic">2. 模擬練習有助於減少臨床實作風險。</div>
-                                    <div class="col-span-12 md:col-span-5 flex justify-around"><input type="radio" name="le_2" value="1" required><input type="radio" name="le_2" value="2"><input type="radio" name="le_2" value="3"><input type="radio" name="le_2" value="4"><input type="radio" name="le_2" value="5"><input type="radio" name="le_2" value="NA"></div>
+                                <div class="flex flex-col md:grid md:grid-cols-12 gap-2 p-4 items-center likert-row border-b md:border-b-0 border-black/10">
+                                    <div class="md:col-span-7 font-bold italic text-sm md:text-base">2. 模擬練習有助於減少臨床實作風險。</div>
+                                    <div class="md:col-span-5 flex justify-around w-full mt-2 md:mt-0">
+                                        <input type="radio" name="le_2" value="1" required><input type="radio" name="le_2" value="2"><input type="radio" name="le_2" value="3"><input type="radio" name="le_2" value="4"><input type="radio" name="le_2" value="5"><input type="radio" name="le_2" value="NA">
+                                    </div>
                                 </div>
-                                <div class="grid grid-cols-12 gap-2 p-3 items-center likert-row">
-                                    <div class="col-span-12 md:col-span-7 font-bold italic">3. 整體環境與情境擬真度有助於演練。</div>
-                                    <div class="col-span-12 md:col-span-5 flex justify-around"><input type="radio" name="le_3" value="1" required><input type="radio" name="le_3" value="2"><input type="radio" name="le_3" value="3"><input type="radio" name="le_3" value="4"><input type="radio" name="le_3" value="5"><input type="radio" name="le_3" value="NA"></div>
+                                <div class="flex flex-col md:grid md:grid-cols-12 gap-2 p-4 items-center likert-row">
+                                    <div class="md:col-span-7 font-bold italic text-sm md:text-base">3. 整體環境與情境擬真度有助於演練。</div>
+                                    <div class="md:col-span-5 flex justify-around w-full mt-2 md:mt-0">
+                                        <input type="radio" name="le_3" value="1" required><input type="radio" name="le_3" value="2"><input type="radio" name="le_3" value="3"><input type="radio" name="le_3" value="4"><input type="radio" name="le_3" value="5"><input type="radio" name="le_3" value="NA">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -365,60 +402,66 @@
                 </div>
             </section>
 
-            <section id="nps-section" class="brutal-card p-8 bg-black text-white">
-                <span class="section-title !bg-yellow-400 !text-black text-xl">03 LOYALTY // 推薦意願</span>
-                <p class="mt-6 mb-8 font-black text-xl md:text-2xl tracking-tighter italic text-center md:text-left">您有多大程度會推薦同事使用本中心？</p>
-                <div class="grid grid-cols-6 md:grid-cols-11 gap-3 w-full">
+            <!-- 03 推薦意願 -->
+            <section id="nps-section" class="brutal-card p-5 md:p-8 bg-black text-white">
+                <span class="section-title !bg-green-500 !text-black text-lg md:text-xl">03 LOYALTY // 推薦意願</span>
+                <p class="mt-6 mb-8 font-black text-lg md:text-2xl tracking-tighter italic leading-snug">您有多大程度會推薦同事使用本中心？</p>
+                <div class="grid grid-cols-6 md:grid-cols-11 gap-2 md:gap-3 w-full">
                     <input type="hidden" name="nps_score" id="nps_score">
-                    <button type="button" onclick="setNPS(0, this)" class="nps-btn brutal-btn py-3 text-black">0</button>
-                    <button type="button" onclick="setNPS(1, this)" class="nps-btn brutal-btn py-3 text-black">1</button>
-                    <button type="button" onclick="setNPS(2, this)" class="nps-btn brutal-btn py-3 text-black">2</button>
-                    <button type="button" onclick="setNPS(3, this)" class="nps-btn brutal-btn py-3 text-black">3</button>
-                    <button type="button" onclick="setNPS(4, this)" class="nps-btn brutal-btn py-3 text-black">4</button>
-                    <button type="button" onclick="setNPS(5, this)" class="nps-btn brutal-btn py-3 text-black">5</button>
-                    <button type="button" onclick="setNPS(6, this)" class="nps-btn brutal-btn py-3 text-black">6</button>
-                    <button type="button" onclick="setNPS(7, this)" class="nps-btn brutal-btn py-3 text-black">7</button>
-                    <button type="button" onclick="setNPS(8, this)" class="nps-btn brutal-btn py-3 text-black">8</button>
-                    <button type="button" onclick="setNPS(9, this)" class="nps-btn brutal-btn py-3 text-black">9</button>
-                    <button type="button" onclick="setNPS(10, this)" class="nps-btn brutal-btn py-3 text-black font-black bg-yellow-400">10</button>
+                    <button type="button" onclick="setNPS(0, this)" class="nps-btn brutal-btn py-2 md:py-3 text-black text-sm">0</button>
+                    <button type="button" onclick="setNPS(1, this)" class="nps-btn brutal-btn py-2 md:py-3 text-black text-sm">1</button>
+                    <button type="button" onclick="setNPS(2, this)" class="nps-btn brutal-btn py-2 md:py-3 text-black text-sm">2</button>
+                    <button type="button" onclick="setNPS(3, this)" class="nps-btn brutal-btn py-2 md:py-3 text-black text-sm">3</button>
+                    <button type="button" onclick="setNPS(4, this)" class="nps-btn brutal-btn py-2 md:py-3 text-black text-sm">4</button>
+                    <button type="button" onclick="setNPS(5, this)" class="nps-btn brutal-btn py-2 md:py-3 text-black text-sm">5</button>
+                    <button type="button" onclick="setNPS(6, this)" class="nps-btn brutal-btn py-2 md:py-3 text-black text-sm">6</button>
+                    <button type="button" onclick="setNPS(7, this)" class="nps-btn brutal-btn py-2 md:py-3 text-black text-sm">7</button>
+                    <button type="button" onclick="setNPS(8, this)" class="nps-btn brutal-btn py-2 md:py-3 text-black text-sm">8</button>
+                    <button type="button" onclick="setNPS(9, this)" class="nps-btn brutal-btn py-2 md:py-3 text-black text-sm">9</button>
+                    <button type="button" onclick="setNPS(10, this)" class="nps-btn brutal-btn py-2 md:py-3 text-black text-sm font-black bg-green-500">10</button>
                 </div>
-                <div class="flex justify-between mt-2 text-xs font-bold uppercase px-1"><span>絕不推薦</span><span>極力推薦</span></div>
-            </section>
-
-            <section class="brutal-card p-8" id="section-feedback">
-                <span class="section-title text-xl">04 FEEDBACK // 意見回饋</span>
-                <div class="mt-6">
-                    <label class="block font-black mb-2 italic" id="feedback-label">請寫下您的具體改進建議（若為未曾使用者，請告訴我們原因）：</label>
-                    <textarea name="feedback" rows="5" class="brutal-input w-full bg-white resize-none" placeholder="您的真實想法，是我們前進的動力..."></textarea>
+                <div class="flex justify-between mt-3 text-[10px] md:text-xs font-bold uppercase px-1">
+                    <span>絕不推薦</span>
+                    <span>極力推薦</span>
                 </div>
             </section>
 
-            <button type="submit" class="brutal-btn w-full py-8 text-2xl md:text-3xl bg-black !text-yellow-400 !shadow-[10px_10px_0px_0px_rgba(255,255,0,1)] hover:!shadow-[4px_4px_0px_0px_rgba(255,255,0,1)]">
-                SUBMIT / 提交 2025 調查數據
+            <!-- 04 意見回饋 -->
+            <section class="brutal-card p-5 md:p-8" id="section-feedback">
+                <span class="section-title text-lg md:text-xl">04 FEEDBACK // 意見回饋</span>
+                <div class="mt-4">
+                    <label class="block font-black mb-2 italic text-sm md:text-base" id="feedback-label">請寫下您的具體改進建議（若為未曾使用者，請告訴我們原因）：</label>
+                    <textarea name="feedback" rows="5" class="brutal-input bg-white resize-none" placeholder="您的想法是中心進步的最大動力..."></textarea>
+                </div>
+            </section>
+
+            <button type="submit" class="brutal-btn w-full py-6 md:py-10 text-xl md:text-3xl bg-black !text-green-400 !shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] hover:!shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:transform active:translate-y-1">
+                SUBMIT / 提交調查數據
             </button>
         </form>
 
         <!-- 溫馨感謝畫面 -->
-        <div id="success-message" class="hidden brutal-card p-16 text-center bg-black text-white">
-            <h2 class="text-4xl md:text-6xl font-black mb-6 uppercase italic">💖 感謝有您</h2>
-            <p class="text-xl md:text-2xl font-bold leading-relaxed mb-4">
-                辛苦了，謝謝您撥冗提供寶貴建議。<br>
+        <div id="success-message" class="hidden brutal-card p-10 md:p-20 text-center bg-black text-white">
+            <div class="text-6xl md:text-8xl mb-8">💚</div>
+            <h2 class="text-3xl md:text-7xl font-black mb-6 uppercase italic tracking-tighter">感謝有您</h2>
+            <p class="text-lg md:text-2xl font-bold leading-relaxed mb-6">
+                辛苦了，謝謝您提供寶貴建議。<br>
                 您的每一份回饋，都是支持中心成長最溫暖的養分。
             </p>
-            <p class="text-lg opacity-80 mb-8 italic">
-                我們會細心研讀您的意見，致力為大家打造更完美的學習環境。<br>
+            <p class="text-sm md:text-lg opacity-80 mb-10 italic">
+                我們會細心研讀您的意見，致力打造更完美的學習環境。<br>
                 祝您有美好的一天！
             </p>
-            <button onclick="location.reload()" class="mt-6 brutal-btn px-10 py-4 text-black bg-white">RESTART / 重新填寫</button>
+            <button onclick="location.reload()" class="brutal-btn px-12 py-5 text-black bg-white font-black text-xl">重新填寫</button>
         </div>
     </div>
 
-    <footer class="mt-20 text-center font-black uppercase tracking-widest text-sm italic">
+    <footer class="mt-12 md:mt-24 text-center font-black uppercase tracking-widest text-[10px] md:text-sm italic pb-12 opacity-70">
         CHIMEI MEDICAL CENTER // CLINICAL COMPETENCY CENTER // 2025 VER.
     </footer>
 
     <script>
-        // 指定 Google Apps Script 佈署網址
+        // Google Apps Script 佈署網址
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyPfCzGQO2dtO4Iqr3-G0GxjOBH2ruAMvZAX8ItT9oo1FLMXDsECgWVXA5nq6c89WRXXg/exec";
 
         function toggleOtherRole() {
@@ -428,6 +471,7 @@
             if (select.value === 'other') {
                 container.classList.remove('hidden');
                 otherInput.setAttribute('required', 'required');
+                otherInput.focus();
             } else {
                 container.classList.add('hidden');
                 otherInput.removeAttribute('required');
@@ -467,6 +511,8 @@
             const notice = document.getElementById('validation-notice');
             const loading = document.getElementById('loading-notice');
             
+            document.querySelectorAll('.invalid-highlight').forEach(el => el.classList.remove('invalid-highlight'));
+
             const isFormValid = this.checkValidity();
             const isNPSValid = freq === 'never' || document.getElementById('nps_score').value !== "";
 
@@ -478,17 +524,14 @@
                 if (firstInvalidEl) {
                     const elementRect = firstInvalidEl.getBoundingClientRect();
                     const absoluteElementTop = elementRect.top + window.pageYOffset;
-                    window.scrollTo({ top: absoluteElementTop - (window.innerHeight / 2), behavior: 'smooth' });
-                    const container = firstInvalidEl.closest('.brutal-card') || firstInvalidEl.closest('.likert-row');
-                    if (container) {
-                        container.classList.add('invalid-highlight');
-                        setTimeout(() => container.classList.remove('invalid-highlight'), 2000);
-                    }
+                    window.scrollTo({ top: absoluteElementTop - (window.innerHeight / 3), behavior: 'smooth' });
+                    
+                    const container = firstInvalidEl.closest('.brutal-card') || firstInvalidEl.closest('.likert-row') || firstInvalidEl;
+                    container.classList.add('invalid-highlight');
                 }
                 return;
             }
 
-            // 開始傳輸資料
             notice.style.display = 'none';
             loading.style.display = 'block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -497,7 +540,6 @@
             const params = new URLSearchParams(formData).toString();
 
             try {
-                // 使用 fetch POST 資料到 GAS (使用 no-cors 是最簡單避免預檢失敗的方法，但看不到回傳值)
                 await fetch(SCRIPT_URL, {
                     method: "POST",
                     body: params,
@@ -505,7 +547,6 @@
                     mode: "no-cors" 
                 });
 
-                // 顯示成功訊息
                 loading.style.display = 'none';
                 this.classList.add('hidden');
                 document.getElementById('success-message').classList.remove('hidden');
@@ -514,13 +555,16 @@
             } catch (error) {
                 loading.style.display = 'none';
                 notice.style.display = 'block';
-                notice.innerText = "❌ 傳輸失敗，請確認網路狀態或 GAS 部署網址是否正確。";
+                notice.innerHTML = "❌ 傳輸失敗<br><small>請檢查網路連線後再試一次。</small>";
             }
         });
 
-        // 監聽輸入變化以隱藏錯誤提示
         document.querySelectorAll('input, select, textarea').forEach(el => {
             el.addEventListener('change', () => {
+                if (el.checkValidity()) {
+                    const container = el.closest('.invalid-highlight');
+                    if (container) container.classList.remove('invalid-highlight');
+                }
                 if (document.getElementById('cscSurvey').checkValidity()) {
                     document.getElementById('validation-notice').style.display = 'none';
                 }
