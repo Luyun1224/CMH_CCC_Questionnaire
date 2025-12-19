@@ -131,8 +131,8 @@
             z-index: 10;
         }
 
-        #satisfaction-section.hidden-section {
-            display: none;
+        #satisfaction-section.hidden-section, .hidden {
+            display: none !important;
         }
 
         .header-row {
@@ -182,10 +182,10 @@
     <div class="max-w-4xl mx-auto">
         <header class="heavy-border bg-white p-6 md:p-10 mb-8 md:mb-12 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] relative">
             <div class="badge-2025 text-lg md:text-xl">2025 SURVEY</div>
-            <h1 class="text-2xl md:text-4xl lg:text-5xl font-[900] mb-5 tracking-tighter italic leading-tight">
+            <h1 class="text-2xl md:text-4xl lg:text-5xl font-[900] mb-5 tracking-tighter italic leading-tight text-center md:text-left">
                 奇美醫院 <br class="md:hidden"> <span class="tilted-box">臨床技能中心</span> 滿意度調查
             </h1>
-            <p class="text-sm md:text-lg font-bold border-t-4 border-black pt-4 uppercase tracking-widest leading-snug">
+            <p class="text-sm md:text-lg font-bold border-t-4 border-black pt-4 uppercase tracking-widest leading-snug text-center md:text-left">
                 CHIMEI MEDICAL CENTER // <span class="text-green-600">CLINICAL COMPETENCY CENTER</span>
             </p>
         </header>
@@ -257,9 +257,9 @@
                             <option value="never">未曾使用過</option>
                         </select>
                     </div>
-                    <div class="flex flex-col">
+                    <div class="flex flex-col" id="purpose-container">
                         <label class="font-black mb-2 uppercase tracking-widest">使用目的</label>
-                        <select name="primary_purpose" required class="brutal-input bg-white">
+                        <select name="primary_purpose" id="primary_purpose" required class="brutal-input bg-white">
                             <option value="">-- 請選擇 --</option>
                             <option value="臨床技能訓練">臨床技能訓練</option>
                             <option value="自主練習">自主練習</option>
@@ -281,31 +281,27 @@
                     <div class="sat-group">
                         <h3 class="font-black text-md md:text-lg bg-black text-white inline-block px-2 mb-4">A. 環境設施</h3>
                         <div class="border-2 md:border-4 border-black">
-                            <!-- 統一標題列 (手機也顯示) -->
                             <div class="grid grid-cols-12 gap-2 p-3 header-row text-center">
-                                <div class="col-span-6 md:col-span-7 text-left">評估項目</div>
-                                <div class="col-span-6 md:col-span-5 flex justify-around"><span>1</span><span>2</span><span>3</span><span>4</span><span class="text-blue-700">5</span><span>N/A</span></div>
+                                <div class="col-span-5 md:col-span-6 text-left">評估項目</div>
+                                <div class="col-span-7 md:col-span-6 flex justify-around"><span class="text-gray-500">N/A</span><span>1</span><span>2</span><span>3</span><span>4</span><span class="text-blue-700">5</span></div>
                             </div>
                             <div class="likert-rows">
-                                <!-- Q1 -->
                                 <div class="grid grid-cols-12 gap-2 p-4 items-center likert-row border-b md:border-b-0 border-black/10">
-                                    <div class="col-span-6 md:col-span-7 font-bold likert-question-text">1. 模擬診間的環境擬真程度與專業氛圍。</div>
-                                    <div class="col-span-6 md:col-span-5 flex justify-around w-full">
-                                        <input type="radio" name="env_1" value="1" required><input type="radio" name="env_1" value="2"><input type="radio" name="env_1" value="3"><input type="radio" name="env_1" value="4"><input type="radio" name="env_1" value="5"><input type="radio" name="env_1" value="NA">
+                                    <div class="col-span-5 md:col-span-6 font-bold likert-question-text">1. 模擬診間的環境擬真程度與專業氛圍。</div>
+                                    <div class="col-span-7 md:col-span-6 flex justify-around w-full">
+                                        <input type="radio" name="env_1" value="NA"><input type="radio" name="env_1" value="1" required><input type="radio" name="env_1" value="2"><input type="radio" name="env_1" value="3"><input type="radio" name="env_1" value="4"><input type="radio" name="env_1" value="5">
                                     </div>
                                 </div>
-                                <!-- Q2 -->
                                 <div class="grid grid-cols-12 gap-2 p-4 items-center likert-row border-b md:border-b-0 border-black/10">
-                                    <div class="col-span-6 md:col-span-7 font-bold likert-question-text">2. 教室空間分配及動線規劃是否滿足團隊演練需求。</div>
-                                    <div class="col-span-6 md:col-span-5 flex justify-around w-full">
-                                        <input type="radio" name="env_2" value="1" required><input type="radio" name="env_2" value="2"><input type="radio" name="env_2" value="3"><input type="radio" name="env_2" value="4"><input type="radio" name="env_2" value="5"><input type="radio" name="env_2" value="NA">
+                                    <div class="col-span-5 md:col-span-6 font-bold likert-question-text">2. 教室空間分配及動線規劃是否滿足團隊演練需求。</div>
+                                    <div class="col-span-7 md:col-span-6 flex justify-around w-full">
+                                        <input type="radio" name="env_2" value="NA"><input type="radio" name="env_2" value="1" required><input type="radio" name="env_2" value="2"><input type="radio" name="env_2" value="3"><input type="radio" name="env_2" value="4"><input type="radio" name="env_2" value="5">
                                     </div>
                                 </div>
-                                <!-- Q3 -->
                                 <div class="grid grid-cols-12 gap-2 p-4 items-center likert-row">
-                                    <div class="col-span-6 md:col-span-7 font-bold likert-question-text">3. 中心空調舒適度、照明亮度及學習靜謐程度。</div>
-                                    <div class="col-span-6 md:col-span-5 flex justify-around w-full">
-                                        <input type="radio" name="env_3" value="1" required><input type="radio" name="env_3" value="2"><input type="radio" name="env_3" value="3"><input type="radio" name="env_3" value="4"><input type="radio" name="env_3" value="5"><input type="radio" name="env_3" value="NA">
+                                    <div class="col-span-5 md:col-span-6 font-bold likert-question-text">3. 中心空調舒適度、照明亮度及學習靜謐程度。</div>
+                                    <div class="col-span-7 md:col-span-6 flex justify-around w-full">
+                                        <input type="radio" name="env_3" value="NA"><input type="radio" name="env_3" value="1" required><input type="radio" name="env_3" value="2"><input type="radio" name="env_3" value="3"><input type="radio" name="env_3" value="4"><input type="radio" name="env_3" value="5">
                                     </div>
                                 </div>
                             </div>
@@ -317,26 +313,26 @@
                         <h3 class="font-black text-md md:text-lg bg-black text-white inline-block px-2 mb-4">B. 設備器材</h3>
                         <div class="border-2 md:border-4 border-black">
                             <div class="grid grid-cols-12 gap-2 p-3 header-row text-center">
-                                <div class="col-span-6 md:col-span-7 text-left">評估項目</div>
-                                <div class="col-span-6 md:col-span-5 flex justify-around"><span>1</span><span>2</span><span>3</span><span>4</span><span class="text-blue-700">5</span><span>N/A</span></div>
+                                <div class="col-span-5 md:col-span-6 text-left">評估項目</div>
+                                <div class="col-span-7 md:col-span-6 flex justify-around"><span class="text-gray-500">N/A</span><span>1</span><span>2</span><span>3</span><span>4</span><span class="text-blue-700">5</span></div>
                             </div>
                             <div class="likert-rows">
                                 <div class="grid grid-cols-12 gap-2 p-4 items-center likert-row border-b md:border-b-0 border-black/10">
-                                    <div class="col-span-6 md:col-span-7 font-bold likert-question-text">1. 模擬人及各類教具之精細度、功能性與先進程度。</div>
-                                    <div class="col-span-6 md:col-span-5 flex justify-around w-full">
-                                        <input type="radio" name="eq_1" value="1" required><input type="radio" name="eq_1" value="2"><input type="radio" name="eq_1" value="3"><input type="radio" name="eq_1" value="4"><input type="radio" name="eq_1" value="5"><input type="radio" name="eq_1" value="NA">
+                                    <div class="col-span-5 md:col-span-6 font-bold likert-question-text">1. 模擬人及各類教具之精細度、功能性與先進程度。</div>
+                                    <div class="col-span-7 md:col-span-6 flex justify-around w-full">
+                                        <input type="radio" name="eq_1" value="NA"><input type="radio" name="eq_1" value="1" required><input type="radio" name="eq_1" value="2"><input type="radio" name="eq_1" value="3"><input type="radio" name="eq_1" value="4"><input type="radio" name="eq_1" value="5">
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-12 gap-2 p-4 items-center likert-row border-b md:border-b-0 border-black/10">
-                                    <div class="col-span-6 md:col-span-7 font-bold likert-question-text">2. 各項設備器械妥善率以及故障維修處理時效性。</div>
-                                    <div class="col-span-6 md:col-span-5 flex justify-around w-full">
-                                        <input type="radio" name="eq_2" value="1" required><input type="radio" name="eq_2" value="2"><input type="radio" name="eq_2" value="3"><input type="radio" name="eq_2" value="4"><input type="radio" name="eq_2" value="5"><input type="radio" name="eq_2" value="NA">
+                                    <div class="col-span-5 md:col-span-6 font-bold likert-question-text">2. 各項設備器械妥善率以及故障維修處理時效性。</div>
+                                    <div class="col-span-7 md:col-span-6 flex justify-around w-full">
+                                        <input type="radio" name="eq_2" value="NA"><input type="radio" name="eq_2" value="1" required><input type="radio" name="eq_2" value="2"><input type="radio" name="eq_2" value="3"><input type="radio" name="eq_2" value="4"><input type="radio" name="eq_2" value="5">
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-12 gap-2 p-4 items-center likert-row">
-                                    <div class="col-span-6 md:col-span-7 font-bold likert-question-text">3. 練習器械與臨床實際器械之規格、手感一致程度。</div>
-                                    <div class="col-span-6 md:col-span-5 flex justify-around w-full">
-                                        <input type="radio" name="eq_3" value="1" required><input type="radio" name="eq_3" value="2"><input type="radio" name="eq_3" value="3"><input type="radio" name="eq_3" value="4"><input type="radio" name="eq_3" value="5"><input type="radio" name="eq_3" value="NA">
+                                    <div class="col-span-5 md:col-span-6 font-bold likert-question-text">3. 練習器械與臨床實際器械之規格、手感一致程度。</div>
+                                    <div class="col-span-7 md:col-span-6 flex justify-around w-full">
+                                        <input type="radio" name="eq_3" value="NA"><input type="radio" name="eq_3" value="1" required><input type="radio" name="eq_3" value="2"><input type="radio" name="eq_3" value="3"><input type="radio" name="eq_3" value="4"><input type="radio" name="eq_3" value="5">
                                     </div>
                                 </div>
                             </div>
@@ -348,26 +344,26 @@
                         <h3 class="font-black text-md md:text-lg bg-black text-white inline-block px-2 mb-4">C. 行政服務</h3>
                         <div class="border-2 md:border-4 border-black">
                             <div class="grid grid-cols-12 gap-2 p-3 header-row text-center">
-                                <div class="col-span-6 md:col-span-7 text-left">評估項目</div>
-                                <div class="col-span-6 md:col-span-5 flex justify-around"><span>1</span><span>2</span><span>3</span><span>4</span><span class="text-blue-700">5</span><span>N/A</span></div>
+                                <div class="col-span-5 md:col-span-6 text-left">評估項目</div>
+                                <div class="col-span-7 md:col-span-6 flex justify-around"><span class="text-gray-500">N/A</span><span>1</span><span>2</span><span>3</span><span>4</span><span class="text-blue-700">5</span></div>
                             </div>
                             <div class="likert-rows">
                                 <div class="grid grid-cols-12 gap-2 p-4 items-center likert-row border-b md:border-b-0 border-black/10">
-                                    <div class="col-span-6 md:col-span-7 font-bold likert-question-text">1. 預約系統操作直覺且流程簡便。</div>
-                                    <div class="col-span-6 md:col-span-5 flex justify-around w-full">
-                                        <input type="radio" name="ad_1" value="1" required><input type="radio" name="ad_1" value="2"><input type="radio" name="ad_1" value="3"><input type="radio" name="ad_1" value="4"><input type="radio" name="ad_1" value="5"><input type="radio" name="ad_1" value="NA">
+                                    <div class="col-span-5 md:col-span-6 font-bold likert-question-text">1. 預約系統操作直覺且流程簡便。</div>
+                                    <div class="col-span-7 md:col-span-6 flex justify-around w-full">
+                                        <input type="radio" name="ad_1" value="NA"><input type="radio" name="ad_1" value="1" required><input type="radio" name="ad_1" value="2"><input type="radio" name="ad_1" value="3"><input type="radio" name="ad_1" value="4"><input type="radio" name="ad_1" value="5">
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-12 gap-2 p-4 items-center likert-row border-b md:border-b-0 border-black/10">
-                                    <div class="col-span-6 md:col-span-7 font-bold likert-question-text">2. 中心人員服務態度友善且專業。</div>
-                                    <div class="col-span-6 md:col-span-5 flex justify-around w-full">
-                                        <input type="radio" name="ad_2" value="1" required><input type="radio" name="ad_2" value="2"><input type="radio" name="ad_2" value="3"><input type="radio" name="ad_2" value="4"><input type="radio" name="ad_2" value="5"><input type="radio" name="ad_2" value="NA">
+                                    <div class="col-span-5 md:col-span-6 font-bold likert-question-text">2. 中心人員服務態度友善且專業。</div>
+                                    <div class="col-span-7 md:col-span-6 flex justify-around w-full">
+                                        <input type="radio" name="ad_2" value="NA"><input type="radio" name="ad_2" value="1" required><input type="radio" name="ad_2" value="2"><input type="radio" name="ad_2" value="3"><input type="radio" name="ad_2" value="4"><input type="radio" name="ad_2" value="5">
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-12 gap-2 p-4 items-center likert-row">
-                                    <div class="col-span-6 md:col-span-7 font-bold likert-question-text">3. 工作人員提供技術支援之效率。</div>
-                                    <div class="col-span-6 md:col-span-5 flex justify-around w-full">
-                                        <input type="radio" name="ad_3" value="1" required><input type="radio" name="ad_3" value="2"><input type="radio" name="ad_3" value="3"><input type="radio" name="ad_3" value="4"><input type="radio" name="ad_3" value="5"><input type="radio" name="ad_3" value="NA">
+                                    <div class="col-span-5 md:col-span-6 font-bold likert-question-text">3. 工作人員提供技術支援之效率。</div>
+                                    <div class="col-span-7 md:col-span-6 flex justify-around w-full">
+                                        <input type="radio" name="ad_3" value="NA"><input type="radio" name="ad_3" value="1" required><input type="radio" name="ad_3" value="2"><input type="radio" name="ad_3" value="3"><input type="radio" name="ad_3" value="4"><input type="radio" name="ad_3" value="5">
                                     </div>
                                 </div>
                             </div>
@@ -379,26 +375,26 @@
                         <h3 class="font-black text-md md:text-lg bg-black text-white inline-block px-2 mb-4">D. 學習效益</h3>
                         <div class="border-2 md:border-4 border-black">
                             <div class="grid grid-cols-12 gap-2 p-3 header-row text-center">
-                                <div class="col-span-6 md:col-span-7 text-left">評估項目</div>
-                                <div class="col-span-6 md:col-span-5 flex justify-around"><span>1</span><span>2</span><span>3</span><span>4</span><span class="text-blue-700">5</span><span>N/A</span></div>
+                                <div class="col-span-5 md:col-span-6 text-left">評估項目</div>
+                                <div class="col-span-7 md:col-span-6 flex justify-around"><span class="text-gray-500">N/A</span><span>1</span><span>2</span><span>3</span><span>4</span><span class="text-blue-700">5</span></div>
                             </div>
                             <div class="likert-rows">
                                 <div class="grid grid-cols-12 gap-2 p-4 items-center likert-row border-b md:border-b-0 border-black/10">
-                                    <div class="col-span-6 md:col-span-7 font-bold italic likert-question-text">1. 在中心練習有助於提升臨床操作信心。</div>
-                                    <div class="col-span-6 md:col-span-5 flex justify-around w-full">
-                                        <input type="radio" name="le_1" value="1" required><input type="radio" name="le_1" value="2"><input type="radio" name="le_1" value="3"><input type="radio" name="le_1" value="4"><input type="radio" name="le_1" value="5"><input type="radio" name="le_1" value="NA">
+                                    <div class="col-span-5 md:col-span-6 font-bold italic likert-question-text">1. 在中心練習有助於提升臨床操作信心。</div>
+                                    <div class="col-span-7 md:col-span-6 flex justify-around w-full">
+                                        <input type="radio" name="le_1" value="NA"><input type="radio" name="le_1" value="1" required><input type="radio" name="le_1" value="2"><input type="radio" name="le_1" value="3"><input type="radio" name="le_1" value="4"><input type="radio" name="le_1" value="5">
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-12 gap-2 p-4 items-center likert-row border-b md:border-b-0 border-black/10">
-                                    <div class="col-span-6 md:col-span-7 font-bold italic likert-question-text">2. 模擬練習有助於減少臨床實作風險。</div>
-                                    <div class="col-span-6 md:col-span-5 flex justify-around w-full">
-                                        <input type="radio" name="le_2" value="1" required><input type="radio" name="le_2" value="2"><input type="radio" name="le_2" value="3"><input type="radio" name="le_2" value="4"><input type="radio" name="le_2" value="5"><input type="radio" name="le_2" value="NA">
+                                    <div class="col-span-5 md:col-span-6 font-bold italic likert-question-text">2. 模擬練習有助於減少臨床實作風險。</div>
+                                    <div class="col-span-7 md:col-span-6 flex justify-around w-full">
+                                        <input type="radio" name="le_2" value="NA"><input type="radio" name="le_2" value="1" required><input type="radio" name="le_2" value="2"><input type="radio" name="le_2" value="3"><input type="radio" name="le_2" value="4"><input type="radio" name="le_2" value="5">
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-12 gap-2 p-4 items-center likert-row">
-                                    <div class="col-span-6 md:col-span-7 font-bold italic likert-question-text">3. 整體環境與情境擬真度有助於演練。</div>
-                                    <div class="col-span-6 md:col-span-5 flex justify-around w-full">
-                                        <input type="radio" name="le_3" value="1" required><input type="radio" name="le_3" value="2"><input type="radio" name="le_3" value="3"><input type="radio" name="le_3" value="4"><input type="radio" name="le_3" value="5"><input type="radio" name="le_3" value="NA">
+                                    <div class="col-span-5 md:col-span-6 font-bold italic likert-question-text">3. 整體環境與情境擬真度有助於演練。</div>
+                                    <div class="col-span-7 md:col-span-6 flex justify-around w-full">
+                                        <input type="radio" name="le_3" value="NA"><input type="radio" name="le_3" value="1" required><input type="radio" name="le_3" value="2"><input type="radio" name="le_3" value="3"><input type="radio" name="le_3" value="4"><input type="radio" name="le_3" value="5">
                                     </div>
                                 </div>
                             </div>
@@ -410,7 +406,7 @@
             <!-- 03 推薦意願 -->
             <section id="nps-section" class="brutal-card p-5 md:p-8 bg-black text-white">
                 <span class="section-title !bg-green-500 !text-black text-lg md:text-xl">03 LOYALTY // 推薦意願</span>
-                <p class="mt-6 mb-8 font-black text-lg md:text-2xl tracking-tighter italic leading-snug">您有多大程度會推薦同事使用本中心？</p>
+                <p class="mt-6 mb-8 font-black text-lg md:text-2xl tracking-tighter italic leading-snug text-center md:text-left">您有多大程度會推薦同事使用本中心？</p>
                 <div class="grid grid-cols-6 md:grid-cols-11 gap-2 md:gap-3 w-full">
                     <input type="hidden" name="nps_score" id="nps_score">
                     <button type="button" onclick="setNPS(0, this)" class="nps-btn brutal-btn py-2 md:py-3 text-black text-sm">0</button>
@@ -423,7 +419,7 @@
                     <button type="button" onclick="setNPS(7, this)" class="nps-btn brutal-btn py-2 md:py-3 text-black text-sm">7</button>
                     <button type="button" onclick="setNPS(8, this)" class="nps-btn brutal-btn py-2 md:py-3 text-black text-sm">8</button>
                     <button type="button" onclick="setNPS(9, this)" class="nps-btn brutal-btn py-2 md:py-3 text-black text-sm">9</button>
-                    <button type="button" onclick="setNPS(10, this)" class="nps-btn brutal-btn py-2 md:py-3 text-black text-sm font-black bg-green-500">10</button>
+                    <button type="button" onclick="setNPS(10, this)" class="nps-btn brutal-btn py-2 md:py-3 text-black text-sm">10</button>
                 </div>
                 <div class="flex justify-between mt-3 text-[10px] md:text-xs font-bold uppercase px-1">
                     <span>絕不推薦</span>
@@ -484,17 +480,23 @@
             const freq = document.getElementById('usage_frequency').value;
             const satSection = document.getElementById('satisfaction-section');
             const npsSection = document.getElementById('nps-section');
+            const purposeContainer = document.getElementById('purpose-container');
+            const purposeSelect = document.getElementById('primary_purpose');
             const fbLabel = document.getElementById('feedback-label');
             const satRadios = document.querySelectorAll('#satisfaction-section input[type="radio"]');
 
             if (freq === 'never') {
                 satSection.classList.add('hidden-section');
                 npsSection.classList.add('hidden-section');
+                purposeContainer.classList.add('hidden'); // 隱藏使用目的
+                purposeSelect.removeAttribute('required');
                 fbLabel.innerText = "請告訴我們您未曾使用中心的原因（如：不知道預約方式、無適合課程等）：";
                 satRadios.forEach(r => r.removeAttribute('required'));
             } else {
                 satSection.classList.remove('hidden-section');
                 npsSection.classList.remove('hidden-section');
+                purposeContainer.classList.remove('hidden'); // 顯示使用目的
+                purposeSelect.setAttribute('required', 'required');
                 fbLabel.innerText = "請寫下您的具體改進建議：";
                 satRadios.forEach(r => r.setAttribute('required', 'required'));
             }
