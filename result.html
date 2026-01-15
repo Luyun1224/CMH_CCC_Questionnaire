@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>奇美醫院臨床技能中心年度滿意度儀表板</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Prop Types (Recharts 的必要依賴) -->
+    <script src="https://unpkg.com/prop-types/prop-types.min.js"></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Recharts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.12.7/Recharts.min.js"></script>
+    
+    <style>
+        body { font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif; background-color: #f3f4f6; }
+        .loading-spinner { border: 4px solid #f3f3f3; border-top: 4px solid #61d384; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #555; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+        const { 
+            BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, 
+            RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, LabelList, Cell, PieChart, Pie
+        } = window.Recharts;
+
+        // --- Icons ---
+        const IconActivity = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>;
+        const IconStar = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>;
+        const IconUsers = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
+        const IconAward = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>;
+        const IconAlert = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>;
+        const IconMessage = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>;
+        const IconSearch = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>;
+        const IconFileText = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>;
+        const IconBarChart = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line></svg>;
+
+        const DEPLOYED_API_URL = "https://script.google.com/macros/s/AKfycbyPfCzGQO2dtO4Iqr3-G0GxjOBH2ruAMvZAX8ItT9oo1FLMXDsECgWVXA5nq6c89WRXXg/exec";
+
+        const COLORS = ['#000000', '#374151', '#4b5563', '#6b7280', '#9ca3af', '#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+        
+        const QUESTION_DESCRIPTIONS = {
+            'env_1': '模擬診間的環境擬真程度與專業氛圍',
+            'env_2': '教室空間分配及動線規劃滿足團隊演練需求',
+            'env_3': '中心空調舒適度、照明亮度及學習靜謐程度',
+            'eq_1': '模擬人及各類教具之精細度、功能性',
+            'eq_2': '各項設備器械妥善率以及故障維修處理時效性',
+            'eq_3': '練習器械與臨床實際器械之規格、手感一致程度',
+            'ad_1': '預約系統操作直覺且流程簡便',
+            'ad_2': '中心人員服務態度友善且專業',
+            'ad_3': '工作人員提供技術支援之效率',
+            'le_1': '在中心練習有助於提升臨床操作信心',
+            'le_2': '模擬練習有助於減少臨床實作風險',
+            'le_3': '整體環境與情境擬真度有助於演練'
+        };
+
+        const Dashboard = () => {
+            const [data, setData] = useState([]);
+            const [loading, setLoading] = useState(false);
+            const [error, setError] = useState(null);
+            const [selectedRole, setSelectedRole] = useState('All');
+            const [apiUrl, setApiUrl] = useState(DEPLOYED_API_URL);
+            const [isApiUrlSet, setIsApiUrlSet] = useState(true);
+
+            const fetchData = async () => {
+                if (!apiUrl) return;
+                setLoading(true);
+                setError(null);
+                try {
+                    const response = await fetch(apiUrl);
+                    const json = await response.json();
+                    if (Array.isArray(json)) {
+                        const validData = json.filter(d => d.role && d.timestamp);
+                        setData(validData);
+                    } else {
+                        throw new Error("資料格式錯誤");
+                    }
+                } catch (err) {
+                    console.error(err);
+                    setError("無法讀取資料。請確認網路連線正常。");
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            const handleSetUrl = (e) => {
+                e.preventDefault();
+                if (apiUrl) {
+                    setIsApiUrlSet(true);
+                    fetchData();
+                }
+            };
+
+            const handleRefresh = () => {
+                fetchData();
+            };
+
+            useEffect(() => {
+                if (isApiUrlSet) {
+                    fetchData();
+                }
+            }, [isApiUrlSet]);
+
+            // --- 數據處理 ---
+            const filteredData = useMemo(() => {
+                return selectedRole === 'All' ? data : data.filter(d => d.role === selectedRole);
+            }, [selectedRole, data]);
+
+            const effectiveData = useMemo(() => {
+                return filteredData.filter(d => d.usage_frequency !== 'never' && d.usage_frequency !== '未曾使用過' && d.nps !== undefined && d.nps !== "");
+            }, [filteredData]);
+
+            const rolesList = useMemo(() => {
+                const roles = new Set(data.map(d => d.role));
+                return ['All', ...Array.from(roles)];
+            }, [data]);
+
+            const kpiStats = useMemo(() => {
+                const total = filteredData.length;
+                const effectiveTotal = effectiveData.length;
+                const promoters = effectiveData.filter(d => d.nps >= 9).length;
+                const detractors = effectiveData.filter(d => d.nps <= 6).length;
+                const npsScore = effectiveTotal === 0 ? 0 : Math.round(((promoters - detractors) / effectiveTotal) * 100);
+
+                let sumScore = 0;
+                let countScore = 0;
+                effectiveData.forEach(d => {
+                    ['env_1', 'env_2', 'env_3', 'eq_1', 'eq_2', 'eq_3', 'ad_1', 'ad_2', 'ad_3', 'le_1', 'le_2', 'le_3'].forEach(key => {
+                        if(d[key]) {
+                            sumScore += Number(d[key]);
+                            countScore++;
+                        }
+                    });
+                });
+                const avgSat = countScore === 0 ? 0 : (sumScore / countScore).toFixed(1);
+                
+                return { total, effectiveTotal, npsScore, avgSat, promoters, detractors };
+            }, [filteredData, effectiveData]);
+
+            // 維度與細項數據
+            const dimensionData = useMemo(() => {
+                const sums = {
+                    '環境設施': { score: 0, count: 0, items: { 'env_1': 0, 'env_2': 0, 'env_3': 0 } },
+                    '設備器材': { score: 0, count: 0, items: { 'eq_1': 0, 'eq_2': 0, 'eq_3': 0 } },
+                    '行政服務': { score: 0, count: 0, items: { 'ad_1': 0, 'ad_2': 0, 'ad_3': 0 } },
+                    '學習效益': { score: 0, count: 0, items: { 'le_1': 0, 'le_2': 0, 'le_3': 0 } },
+                };
+
+                const itemLabels = {
+                    'env_1': '環境擬真度', 'env_2': '動線規劃', 'env_3': '舒適度',
+                    'eq_1': '教具功能性', 'eq_2': '維修時效', 'eq_3': '器械手感',
+                    'ad_1': '預約系統', 'ad_2': '人員態度', 'ad_3': '技術支援',
+                    'le_1': '提升信心', 'le_2': '減少風險', 'le_3': '演練助益'
+                };
+
+                effectiveData.forEach(d => {
+                    const add = (cat, key) => {
+                        if(d[key]) {
+                            const val = Number(d[key]);
+                            sums[cat].score += val;
+                            sums[cat].count += 1;
+                            sums[cat].items[key] += val;
+                        }
+                    };
+                    ['env_1','env_2','env_3'].forEach(k => add('環境設施', k));
+                    ['eq_1','eq_2','eq_3'].forEach(k => add('設備器材', k));
+                    ['ad_1','ad_2','ad_3'].forEach(k => add('行政服務', k));
+                    ['le_1','le_2','le_3'].forEach(k => add('學習效益', k));
+                });
+
+                const dimensionRanking = Object.keys(sums).map(key => ({
+                    name: key,
+                    score: sums[key].count ? (sums[key].score / sums[key].count).toFixed(2) : 0
+                })).sort((a, b) => b.score - a.score);
+
+                let allItems = [];
+                Object.keys(sums).forEach(catKey => {
+                    Object.keys(sums[catKey].items).forEach(itemKey => {
+                        const itemCount = effectiveData.filter(d => d[itemKey]).length;
+                        allItems.push({
+                            id: itemKey,
+                            name: itemLabels[itemKey],
+                            fullName: QUESTION_DESCRIPTIONS[itemKey],
+                            category: catKey,
+                            score: itemCount ? (sums[catKey].items[itemKey] / itemCount).toFixed(2) : 0
+                        });
+                    });
+                });
+                
+                const sortedItems = [...allItems].sort((a, b) => a.score - b.score);
+
+                return { allItems, sortedItems, dimensionRanking };
+            }, [effectiveData]);
+
+            // 職類分佈 (智慧歸類)
+            const roleDistributionData = useMemo(() => {
+                const counts = {};
+                filteredData.forEach(d => {
+                    counts[d.role] = (counts[d.role] || 0) + 1;
+                });
+
+                const threshold = 1; 
+                let otherCount = 0;
+                let otherRoles = [];
+                const result = [];
+
+                Object.keys(counts).forEach(role => {
+                    if (counts[role] <= threshold) {
+                        otherCount += counts[role];
+                        otherRoles.push(`${role}`);
+                    } else {
+                        result.push({ name: role, value: counts[role] });
+                    }
+                });
+
+                if (otherCount > 0) {
+                    result.push({
+                        name: '其他',
+                        value: otherCount,
+                        details: otherRoles.join('、')
+                    });
+                }
+
+                return result.sort((a, b) => b.value - a.value);
+            }, [filteredData]);
+
+            // 使用者原聲
+            const cleanFeedbacks = useMemo(() => {
+                const invalidKeywords = ['無', '沒有', 'no', 'none', '沒意見', '無意見', 'nil', 'na', 'ok', 'good'];
+                return filteredData.filter(d => {
+                    if (!d.feedback) return false;
+                    const text = d.feedback.trim().toLowerCase();
+                    if (text.length < 2) return false;
+                    if (invalidKeywords.includes(text)) return false;
+                    return true;
+                });
+            }, [filteredData]);
+
+            // 低分原因分析
+            const lowScoreAnalysis = useMemo(() => {
+                const lowest3Items = dimensionData.sortedItems.slice(0, 3);
+                return lowest3Items.map(item => {
+                    const relatedFeedbacks = cleanFeedbacks
+                        .filter(d => {
+                            const score = Number(d[item.id]);
+                            return score > 0 && score < 4;
+                        })
+                        .map(d => ({
+                            role: d.role,
+                            score: d[item.id],
+                            text: d.feedback
+                        }));
+                    return { ...item, feedbacks: relatedFeedbacks };
+                });
+            }, [dimensionData, cleanFeedbacks]);
+
+            const getBarColor = (score, index, totalItems) => {
+                if (score < 4.0) return '#ef4444'; 
+                if (index < 3) return '#f97316';   
+                return '#000000';
+            };
+
+            const CustomTooltip = ({ active, payload, label }) => {
+                if (active && payload && payload.length) {
+                    const data = payload[0].payload;
+                    return (
+                        <div className="bg-white p-4 border-2 border-black shadow-lg max-w-xs">
+                            <p className="font-black text-lg mb-1">{data.name}</p>
+                            <p className="text-sm text-gray-600 mb-2 font-bold">{data.fullName}</p>
+                            <p className="text-xl font-black text-black">
+                                得分: {data.score} <span className="text-sm font-normal text-gray-500">/ 5.0</span>
+                            </p>
+                        </div>
+                    );
+                }
+                return null;
+            };
+
+            const CustomPieTooltip = ({ active, payload }) => {
+                if (active && payload && payload.length) {
+                    const data = payload[0].payload;
+                    return (
+                        <div className="bg-white p-3 border-2 border-black shadow-lg z-50">
+                            <p className="font-black text-base">{data.name}: {data.value}人</p>
+                            {data.name === '其他' && data.details && (
+                                <div className="mt-2 text-xs font-bold text-gray-500 max-w-[200px] break-words border-t border-gray-200 pt-1">
+                                    包含: {data.details}
+                                </div>
+                            )}
+                        </div>
+                    );
+                }
+                return null;
+            };
+
+            // --- 總結分析邏輯 (更新版) ---
+            const summary = useMemo(() => {
+                const topItems = dimensionData.sortedItems.slice(-3).reverse();
+                const lowItems = dimensionData.sortedItems.slice(0, 3);
+                
+                const isExcellent = kpiStats.npsScore > 50;
+                const isGood = kpiStats.npsScore > 0;
+
+                // 2025 更新：針對臨床技能中心特定關鍵字進行掃描
+                const feedbackThemes = {
+                    supplies: { count: 0, keywords: ['衛材', '耗材', '急救車', '紗布', '針頭', '補充', '缺', '不夠'], text: '衛材與耗材補充', relatedQuestions: ['eq_1', 'eq_2'] },
+                    // 修改：加入軟體、操作、教案等關鍵字到 equipment/software 相關
+                    equipment: { count: 0, keywords: ['設備', '器材', '模擬人', '教具', '模型', '假人', '儀器', '操作', '壞', '修', '軟體', '介面', '教案', '流程圖', '設定', '功能性'], text: '教具軟體與設備操作', relatedQuestions: ['eq_1', 'eq_2', 'eq_3', 'ad_3'] },
+                    space: { count: 0, keywords: ['空間', '動線', '擁擠', '擠', '小', '吵', '隔音'], text: '空間動線與環境', relatedQuestions: ['env_2', 'env_3'] },
+                    // 修改：行政預約移除「流程」、「系統」等模糊字眼，鎖定「預約」、「借用」
+                    admin: { count: 0, keywords: ['預約', '借用', '網站', '行政', '報名'], text: '預約行政流程', relatedQuestions: ['ad_1'] },
+                    // 新增：人力配置
+                    manpower: { count: 0, keywords: ['人力', '人手', '不足', '增加人力', '忙碌'], text: '人力資源配置', relatedQuestions: ['ad_3', 'eq_2'] }
+                };
+
+                // 負面詞彙庫 (用於判斷語氣)
+                const negativeWords = ['難用', '不便', '麻煩', '複雜', '慢', '當機', '卡', '不易', '爛', '差', '改進', '加強', '缺點', '不足', '壞', '問題', '需要', '建議'];
+
+                cleanFeedbacks.forEach(item => {
+                    const text = item.feedback;
+                    const textLower = text.toLowerCase();
+                    
+                    Object.values(feedbackThemes).forEach(theme => {
+                        // 1. 先看有無命中主題關鍵字
+                        if (theme.keywords.some(k => textLower.includes(k))) {
+                            
+                            // 2. 進行雙重驗證：(給分低) OR (語氣負面)
+                            // 檢查相關題項是否有 < 4 分的情況
+                            const hasLowScore = theme.relatedQuestions.some(qKey => Number(item[qKey]) < 4);
+                            // 檢查回饋內容是否有負面詞彙
+                            const hasNegativeWord = negativeWords.some(nw => textLower.includes(nw));
+
+                            // 3. 只有通過驗證才計數
+                            if (hasLowScore || hasNegativeWord) {
+                                theme.count++;
+                            }
+                        }
+                    });
+                });
+
+                let actionableAdvice = [];
+
+                // 1. 針對量化低分項目的建議
+                lowItems.forEach(item => {
+                    if (item.score < 4.0) {
+                        actionableAdvice.push(`🔴 **${item.name}** 得分偏低 (${item.score})：需列為首要改善目標。`);
+                    }
+                });
+
+                // 2. 針對質化回饋的建議 (只在有真實有效負評時才顯示)
+                if (feedbackThemes.supplies.count > 0) {
+                    actionableAdvice.push(`💊 **衛材與耗材 (${feedbackThemes.supplies.count} 則反映)**：使用者提及急救車或練習耗材補充問題。建議：建立每日衛材檢查表，確保急救車及常用耗材存量充足。`);
+                }
+                if (feedbackThemes.equipment.count > 0) {
+                    actionableAdvice.push(`💻 **教具軟體與操作 (${feedbackThemes.equipment.count} 則反映)**：反映模擬人軟體設定繁瑣或缺乏操作指引。建議：製作「基礎操作流程圖 (SOP)」或懶人包，並預先設定常用教案模組，協助教師快速上手。`);
+                }
+                if (feedbackThemes.manpower.count > 0) {
+                    actionableAdvice.push(`👥 **人力資源 (${feedbackThemes.manpower.count} 則反映)**：反映人力不足影響維護或教學支援。建議：評估增加臨技中心人力或工讀生，以利定期檢視維護教具功能性。`);
+                }
+                if (feedbackThemes.space.count > 0) {
+                    actionableAdvice.push(`📐 **空間環境 (${feedbackThemes.space.count} 則反映)**：反映空間擁擠或動線問題。建議：於大型OSCE考試或多人課程時，重新規劃分流動線。`);
+                }
+                if (feedbackThemes.admin.count > 0) {
+                    actionableAdvice.push(`📅 **行政預約 (${feedbackThemes.admin.count} 則反映)**：反映預約流程問題。建議：優化網頁預約介面，或提供簡易操作指南。`);
+                }
+                
+                if (actionableAdvice.length === 0) {
+                    actionableAdvice.push("✅ 目前無重大具體負面回饋（系統已過濾單純關鍵字提及，僅針對低分或負面語氣之回饋進行分析），建議持續保持現有服務水準。");
+                }
+
+                return {
+                    status: isExcellent ? "卓越 (Excellent)" : isGood ? "良好 (Good)" : "待加強 (Needs Improvement)",
+                    strengths: topItems.map(i => i.name).join("、"),
+                    weaknesses: lowItems.map(i => i.name).join("、"),
+                    detailedAdvice: actionableAdvice
+                };
+            }, [dimensionData, kpiStats, cleanFeedbacks]);
+
+            if (!isApiUrlSet) {
+                return (
+                    <div className="min-h-screen flex items-center justify-center bg-green-50">
+                        <div className="bg-white p-8 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] max-w-md w-full">
+                            <h2 className="text-2xl font-black mb-4">連結資料來源</h2>
+                            <form onSubmit={handleSetUrl} className="space-y-4">
+                                <input type="url" required className="w-full p-3 border-2 border-black font-bold focus:outline-none focus:bg-gray-50" value={apiUrl} onChange={(e) => setApiUrl(e.target.value)} />
+                                <button type="submit" className="w-full bg-black text-green-400 font-black py-3 border-2 border-black hover:translate-y-1 hover:shadow-none transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">載入儀表板</button>
+                            </form>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="min-h-screen bg-gray-50 font-sans text-gray-900 pb-10">
+                    <header className="bg-black text-white p-6 border-b-4 border-green-400 shadow-md">
+                        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
+                            <div>
+                                <h1 className="text-2xl md:text-3xl font-black tracking-tight italic">奇美醫院臨床技能中心</h1>
+                                <p className="text-green-400 font-bold tracking-widest text-sm mt-1">年度滿意度儀表板 // ANNUAL DASHBOARD</p>
+                            </div>
+                            <div className="mt-4 md:mt-0 flex items-center gap-4">
+                                <button onClick={handleRefresh} className="text-xs text-gray-400 hover:text-white underline mr-4 font-bold flex items-center gap-1">↻ 重新整理</button>
+                                <span className="text-sm font-bold text-gray-400">職類篩選:</span>
+                                <select className="bg-gray-800 text-white border-2 border-green-400 p-2 font-bold rounded-none focus:outline-none" value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)}>
+                                    {rolesList.map(r => <option key={r} value={r}>{r === 'All' ? '全部職類' : r}</option>)}
+                                </select>
+                            </div>
+                        </div>
+                    </header>
+
+                    {loading ? (
+                        <div className="flex flex-col items-center justify-center h-96">
+                            <div className="loading-spinner mb-4"></div>
+                            <p className="font-bold animate-pulse">數據同步中...</p>
+                        </div>
+                    ) : error ? (
+                        <div className="max-w-7xl mx-auto mt-8 p-6 bg-red-100 border-4 border-red-500 text-center"><p className="text-red-700 font-bold text-xl">{error}</p><button onClick={fetchData} className="mt-4 px-4 py-2 bg-red-500 text-white font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">重試</button></div>
+                    ) : (
+                        <main className="max-w-7xl mx-auto px-4 mt-8 space-y-8">
+                            
+                            {/* KPI Cards */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                {/* NPS Card */}
+                                <div className="bg-white border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative group">
+                                    <div className="absolute top-0 right-0 bg-green-400 text-black font-black text-xs px-2 py-1">LOYALTY</div>
+                                    <div className="flex justify-between items-end mb-2">
+                                        <h3 className="font-bold text-gray-500 uppercase tracking-wider">淨推薦值 (NPS)</h3>
+                                        <IconActivity />
+                                    </div>
+                                    <div className="text-5xl font-black tracking-tighter">
+                                        {kpiStats.npsScore}
+                                        <span className="text-lg text-gray-400 font-bold ml-2">分</span>
+                                    </div>
+                                    <div className="mt-4 w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+                                        <div className={`h-full ${kpiStats.npsScore > 50 ? 'bg-green-500' : kpiStats.npsScore > 0 ? 'bg-yellow-400' : 'bg-red-500'}`} style={{ width: `${Math.max(0, Math.min(100, (kpiStats.npsScore + 100) / 2))}%` }}></div>
+                                    </div>
+                                    <div className="mt-4 pt-4 border-t border-gray-100 text-xs text-gray-500 leading-relaxed">
+                                        <span className="font-bold text-black">意義解讀：</span><br/>
+                                        測量使用者的忠誠度。分數範圍 -100 到 100。<br/>
+                                        <span className="text-green-600 font-bold">> 50 為卓越</span>，<span className="text-yellow-500 font-bold">0-50 為良好</span>，<span className="text-red-500 font-bold">&lt; 0 需改進</span>。
+                                    </div>
+                                </div>
+
+                                {/* Satisfaction Card */}
+                                <div className="bg-white border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                                    <div className="absolute top-0 right-0 bg-black text-white font-black text-xs px-2 py-1">SATISFACTION</div>
+                                    <div className="flex justify-between items-end mb-2">
+                                        <h3 className="font-bold text-gray-500 uppercase tracking-wider">整體滿意度</h3>
+                                        <IconStar />
+                                    </div>
+                                    <div className="text-5xl font-black tracking-tighter">
+                                        {kpiStats.avgSat}
+                                        <span className="text-lg text-gray-400 font-bold ml-2">/ 5.0</span>
+                                    </div>
+                                    <div className="mt-4 pt-4 border-t border-gray-100 text-xs text-gray-500 leading-relaxed mt-11">
+                                        <span className="font-bold text-black">意義解讀：</span><br/>
+                                        反映服務符合期望的程度。<br/>
+                                        <span className="text-green-600 font-bold">> 4.5 高滿意</span>，<span className="text-red-500 font-bold">&lt; 4.0 有待加強</span>。
+                                    </div>
+                                </div>
+
+                                {/* Volume Card */}
+                                <div className="bg-white border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                                    <div className="absolute top-0 right-0 bg-gray-200 text-black font-black text-xs px-2 py-1">VOLUME</div>
+                                    <div className="flex justify-between items-end mb-2">
+                                        <h3 className="font-bold text-gray-500 uppercase tracking-wider">總填答人數</h3>
+                                        <IconUsers />
+                                    </div>
+                                    <div className="text-5xl font-black tracking-tighter">
+                                        {kpiStats.total}
+                                        <span className="text-lg text-gray-400 font-bold ml-2">人</span>
+                                    </div>
+                                    <div className="mt-4 pt-4 border-t border-gray-100 text-xs text-gray-500 leading-relaxed mt-11">
+                                        <span className="font-bold text-black">資料過濾：</span><br/>
+                                        共回收 {kpiStats.total} 份。<br/>
+                                        扣除未曾使用/資料不全者，<br/>
+                                        <span className="font-bold text-black border-b-2 border-green-400">有效分析問卷：{kpiStats.effectiveTotal} 份</span>。
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 圖表區 */}
+                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                                
+                                {/* 職類分佈 (Pie Chart) */}
+                                <div className="lg:col-span-5 bg-white border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col">
+                                    <h3 className="text-xl font-black mb-6 flex items-center gap-2"><IconUsers /> 填答職類分佈 (Top Roles)</h3>
+                                    <div className="flex-1 min-h-[450px]">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <PieChart>
+                                                <Pie
+                                                    data={roleDistributionData}
+                                                    cx="50%"
+                                                    cy="50%"
+                                                    labelLine={true}
+                                                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                                                    outerRadius={120}
+                                                    fill="#8884d8"
+                                                    dataKey="value"
+                                                >
+                                                    {roleDistributionData.map((entry, index) => (
+                                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                                    ))}
+                                                </Pie>
+                                                <Tooltip content={<CustomPieTooltip />} />
+                                            </PieChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                </div>
+
+                                {/* 全項目滿意度排行 */}
+                                <div className="lg:col-span-7 bg-white border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                                    <h3 className="text-xl font-black mb-2 flex items-center gap-2"><IconAward /> 滿意度全項目排行</h3>
+                                    <p className="text-sm text-gray-500 mb-4 font-bold">
+                                        <span className="inline-block w-3 h-3 bg-red-500 mr-1"></span>低於 4.0 分
+                                        <span className="inline-block w-3 h-3 bg-orange-500 ml-3 mr-1"></span>排名後三名
+                                    </p>
+                                    <div className="h-[500px] w-full">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <BarChart
+                                                data={dimensionData.sortedItems}
+                                                layout="vertical"
+                                                margin={{ top: 5, right: 30, left: 100, bottom: 5 }}
+                                            >
+                                                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                                                <XAxis type="number" domain={[0, 5]} hide />
+                                                <YAxis 
+                                                    type="category" 
+                                                    dataKey="name" 
+                                                    width={120} 
+                                                    tick={{fontSize: 12, fontWeight: 'bold', fill: '#000'}} 
+                                                    interval={0}
+                                                />
+                                                <Tooltip content={<CustomTooltip />} cursor={{fill: '#f3f4f6'}} />
+                                                <Bar dataKey="score" barSize={20}>
+                                                    <LabelList dataKey="score" position="right" fontWeight="bold" />
+                                                    {dimensionData.sortedItems.map((entry, index) => (
+                                                        <Cell 
+                                                            key={`cell-${index}`} 
+                                                            fill={getBarColor(entry.score, index, dimensionData.sortedItems.length)} 
+                                                        />
+                                                    ))}
+                                                </Bar>
+                                            </BarChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 智慧分析與回饋 */}
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div className="bg-white border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-t-8 border-t-red-500">
+                                    <h3 className="text-xl font-black mb-4 flex items-center gap-2 text-red-600">
+                                        <IconSearch /> 低分項目原因分析
+                                    </h3>
+                                    <p className="mb-4 text-sm font-bold text-gray-500">系統自動偵測最低分的前 3 個項目，並抓取相關聯的建議：</p>
+                                    
+                                    <div className="space-y-6 custom-scrollbar overflow-y-auto max-h-[400px] pr-2">
+                                        {lowScoreAnalysis.map((item, index) => (
+                                            <div key={item.id} className="bg-red-50 p-4 border-l-4 border-red-500">
+                                                <div className="flex justify-between items-center mb-2">
+                                                    <span className="font-black text-lg">#{index + 1} {item.name}</span>
+                                                    <span className="bg-red-200 text-red-800 px-2 py-1 text-xs font-bold rounded">均分: {item.score}</span>
+                                                </div>
+                                                
+                                                {item.feedbacks.length > 0 ? (
+                                                    <ul className="list-disc pl-5 space-y-2">
+                                                        {item.feedbacks.map((fb, idx) => (
+                                                            <li key={idx} className="text-sm font-medium text-gray-800">
+                                                                <span className="text-xs text-gray-500 font-bold mr-1">[{fb.role}]:</span>
+                                                                {fb.text}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                ) : (
+                                                    <p className="text-sm text-gray-400 italic">此項目無具體文字建議。</p>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="bg-black text-white p-6 border-4 border-black shadow-[8px_8px_0px_0px_rgba(60,60,60,1)]">
+                                    <h3 className="text-xl font-black mb-6 flex items-center gap-3 text-green-400">
+                                        <IconMessage /> 
+                                        <span>使用者原聲 (精選有意義回饋)</span>
+                                    </h3>
+                                    <div className="grid grid-cols-1 gap-4 custom-scrollbar overflow-y-auto max-h-[400px] pr-2">
+                                        {cleanFeedbacks.map((item, i) => (
+                                            <div key={i} className="bg-white text-black p-4 border-l-4 border-green-500 relative group hover:bg-green-50 transition-colors">
+                                                <p className="font-bold italic text-sm md:text-base">"{item.feedback}"</p>
+                                                <div className="mt-3 flex justify-between items-center border-t border-gray-200 pt-2">
+                                                    <span className="text-xs font-bold bg-black text-white px-2 py-0.5">{item.role}</span>
+                                                    <span className="text-xs font-bold text-gray-400">NPS: {item.nps} | Exp: {item.seniority}</span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {cleanFeedbacks.length === 0 && (
+                                            <p className="text-gray-500 italic text-center py-10">目前尚無具體文字建議。</p>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 年度總結報告區塊 */}
+                            <footer className="mt-8 bg-white border-4 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                                <h3 className="text-2xl font-black mb-6 flex items-center gap-2 border-b-4 border-black pb-4">
+                                    <IconFileText /> 年度滿意度分析總結 (Summary)
+                                </h3>
+
+                                {/* 四大維度排行圖表 */}
+                                <div className="mb-8">
+                                    <h4 className="text-lg font-black text-blue-600 mb-4 flex items-center gap-2">
+                                        <IconBarChart /> 四大維度滿意度排行
+                                    </h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                        {dimensionData.dimensionRanking.map((dim, idx) => (
+                                            <div key={dim.name} className="bg-gray-100 p-4 border-2 border-black flex flex-col items-center justify-center relative">
+                                                <div className={`absolute top-0 left-0 bg-black text-white px-2 py-0.5 text-xs font-bold`}>#{idx + 1}</div>
+                                                <div className="text-sm font-bold text-gray-500 mb-1">{dim.name}</div>
+                                                <div className="text-3xl font-black">{dim.score}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t-2 border-gray-200 pt-6">
+                                    <div>
+                                        <h4 className="text-lg font-black text-green-600 mb-2">✦ 整體概況與優勢</h4>
+                                        <ul className="list-disc pl-5 space-y-2 text-gray-800 font-medium">
+                                            <li>
+                                                本年度整體 NPS 為 <span className="font-black">{kpiStats.npsScore} 分</span>，
+                                                評級屬於 <span className="bg-black text-white px-1">{summary.status}</span>。
+                                            </li>
+                                            <li>
+                                                使用者滿意度最高的前三項為：<span className="font-bold border-b-2 border-green-400">{summary.strengths}</span>，
+                                                顯示中心在這些領域表現優異，應繼續保持。
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-lg font-black text-red-500 mb-2">✦ 持續改善建議 (結合量化與質化分析)</h4>
+                                        <div className="space-y-3">
+                                            <ul className="list-disc pl-5 space-y-2 text-gray-800 font-medium">
+                                                <li>
+                                                    相對弱項（量化數據後三名）：<span className="font-bold border-b-2 border-red-300">{summary.weaknesses}</span>。
+                                                </li>
+                                            </ul>
+                                            
+                                            <div className="bg-red-50 p-4 border-l-4 border-red-500 rounded">
+                                                <p className="font-bold text-red-700 mb-2">具體行動方案 (基於真實回饋)：</p>
+                                                <ul className="list-disc pl-5 space-y-2 text-sm text-gray-800">
+                                                    {summary.detailedAdvice.map((advice, idx) => (
+                                                        <li key={idx} dangerouslySetInnerHTML={{__html: advice.replace(/\n/g, '<br/>')}} />
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </footer>
+
+                        </main>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<Dashboard />);
+    </script>
+</body>
+</html>
